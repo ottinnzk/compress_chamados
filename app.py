@@ -79,7 +79,7 @@ def compress_video(input_path: str, output_path: str):
         "-i", input_path,
         "-vf", scale_filter,
         "-c:v", "libx264",
-        "-preset", "superfast",
+        "-preset", "ultrafast",
         "-b:v", f"{video_kbps}k",
         "-maxrate", f"{video_kbps}k",
         "-bufsize", f"{video_kbps * 2}k",
