@@ -95,6 +95,7 @@ def compress_video(input_path: str, output_path: str):
         raise RuntimeError(f"Erro na compressão do FFmpeg:\n{res.stderr}")
 
 
+# HTML da Interface com Rodapé
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -108,15 +109,26 @@ HTML_TEMPLATE = """
         h2 { margin-top: 0; color: #1e293b; font-size: 1.3rem; }
         p { color: #64748b; font-size: 0.9rem; line-height: 1.4; }
         .upload-area { border: 2px dashed #cbd5e1; padding: 25px; text-align: center; border-radius: 8px; margin: 20px 0; background: #f8fafc; }
-        button { width: 100%; background: #2563eb; color: white; border: none; padding: 12px; font-size: 1rem; font-weight: 600; border-radius: 6px; cursor: pointer; }
+        button { width: 100%; background: #2563eb; color: white; border: none; padding: 12px; font-size: 1rem; font-weight: 600; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
         button:hover { background: #1d4ed8; }
         .status { margin-top: 15px; font-size: 0.9rem; color: #059669; font-weight: 600; text-align: center; display: none; }
+        
+        /* Estilo do Rodapé */
+        .footer { 
+            margin-top: 25px; 
+            padding-top: 15px; 
+            border-top: 1px solid #e2e8f0; 
+            text-align: center; 
+            font-size: 0.8rem; 
+            color: #94a3b8; 
+        }
+        .footer strong { color: #64748b; }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Compressor de Vídeo para Chamados</h2>
-        <p>Ajuste automático para o limite de 20MB.</p>
+        <p>Ajuste automático para garantir que o vídeo fique dentro do limite de 25MB.</p>
         
         <form action="/compress" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
             <div class="upload-area">
@@ -125,6 +137,11 @@ HTML_TEMPLATE = """
             <button type="submit" id="btnSubmit">Comprimir e Baixar</button>
         </form>
         <div id="statusMsg" class="status">Processando vídeo... por favor aguarde.</div>
+
+        <!-- Rodapé do Card -->
+        <div class="footer">
+            🛠️ <strong>Ferramenta Interna</strong> • Otimização de anexos para o sistema de chamados
+        </div>
     </div>
 
     <script>
