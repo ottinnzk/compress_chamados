@@ -31,6 +31,7 @@ OUTPUT_FOLDER = BASE_DIR / "temp_compressed"
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
 
+# Alvo de 18.5 MB garante margem de segurança para nunca ultrapassar 20 MB
 TARGET_SIZE_MB = 18.5
 AUDIO_BITRATE_KBPS = 128
 
@@ -72,22 +73,24 @@ def compress_video(input_path: str, output_path: str):
 
     scale_filter = "scale=-2:720" if video_kbps < 800 else "scale=-2:1080"
 
+    # Comando corrigido
     cmd = [
-    "ffmpeg", "-y",
-    "-i", input_path,
-    "-c:v", "libx264",
-    "-preset", "superfast",
-    "-b:v", f"{video_bitrate}k",
-    "-maxrate", f"{video_bitrate}k",
-    "-bufsize", f"{video_bitrate * 2}k",
-    "-threads", "1",  # <-- Limita o uso de CPU/RAM para o servidor gratuito
-    "-c:a", "aac",
-    "-b:a", "128k",
-    output_path
-]
+        FFMPEG_EXE, "-y",
+        "-i", input_path,
+        "-vf", scale_filter,
+        "-c:v", "libx264",
+        "-preset", "superfast",
+        "-b:v", f"{video_kbps}k",
+        "-maxrate", f"{video_kbps}k",
+        "-bufsize", f"{video_kbps * 2}k",
+        "-threads", "1",
+        "-c:a", "aac",
+        "-b:a", f"{AUDIO_BITRATE_KBPS}k",
+        output_path
+    ]
 
     res = subprocess.run(
-        ffmpeg_cmd, 
+        cmd, 
         capture_output=True, 
         text=True, 
         encoding="utf-8", 
@@ -97,7 +100,7 @@ def compress_video(input_path: str, output_path: str):
         raise RuntimeError(f"Erro na compressão do FFmpeg:\n{res.stderr}")
 
 
-# HTML da Interface com Rodapé
+# HTML da Interface
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -115,7 +118,6 @@ HTML_TEMPLATE = """
         button:hover { background: #1d4ed8; }
         .status { margin-top: 15px; font-size: 0.9rem; color: #059669; font-weight: 600; text-align: center; display: none; }
         
-        /* Estilo do Rodapé */
         .footer { 
             margin-top: 25px; 
             padding-top: 15px; 
@@ -140,7 +142,6 @@ HTML_TEMPLATE = """
         </form>
         <div id="statusMsg" class="status">Processando vídeo... por favor aguarde.</div>
 
-        <!-- Rodapé do Card -->
         <div class="footer">
             🛠️ <strong>Ferramenta Interna</strong> • Otimização de anexos para o sistema de chamados
         </div>
@@ -176,7 +177,7 @@ def compress():
     ext = Path(file.filename).suffix or ".mp4"
 
     input_path = str(UPLOAD_FOLDER / f"{file_id}_in{ext}")
-    output_path = str(OUTPUT_FOLDER / f"{file_id}_25MB.mp4")
+    output_path = str(OUTPUT_FOLDER / f"{file_id}_20MB.mp4")
 
     try:
         file.save(input_path)
