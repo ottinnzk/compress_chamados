@@ -128,7 +128,7 @@ HTML_TEMPLATE = """
 <body>
     <div class="container">
         <h2>Compressor de Vídeo para Chamados</h2>
-        <p>Ajuste automático para garantir que o vídeo fique dentro do limite de 25MB.</p>
+        <p>Ajuste automático para garantir que o vídeo fique dentro do limite de 20MB.</p>
         
         <form action="/compress" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
             <div class="upload-area">
