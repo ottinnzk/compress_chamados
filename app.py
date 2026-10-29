@@ -72,17 +72,19 @@ def compress_video(input_path: str, output_path: str):
 
     scale_filter = "scale=-2:720" if video_kbps < 800 else "scale=-2:1080"
 
-    ffmpeg_cmd = [
-        FFMPEG_EXE, "-y",
-        "-i", input_path,
-        "-c:v", "libx264",
-        "-b:v", f"{video_kbps}k",
-        "-preset", "superfast",
-        "-vf", scale_filter,
-        "-c:a", "aac",
-        "-b:a", f"{AUDIO_BITRATE_KBPS}k",
-        output_path
-    ]
+    cmd = [
+    "ffmpeg", "-y",
+    "-i", input_path,
+    "-c:v", "libx264",
+    "-preset", "superfast",
+    "-b:v", f"{video_bitrate}k",
+    "-maxrate", f"{video_bitrate}k",
+    "-bufsize", f"{video_bitrate * 2}k",
+    "-threads", "1",  # <-- Limita o uso de CPU/RAM para o servidor gratuito
+    "-c:a", "aac",
+    "-b:a", "128k",
+    output_path
+]
 
     res = subprocess.run(
         ffmpeg_cmd, 
